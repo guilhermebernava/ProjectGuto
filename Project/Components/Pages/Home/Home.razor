@@ -2,8 +2,11 @@
 @using Domain.Entities
 @using Domain.Repositories
 @using Project.Components.Pages.Home;
+@rendermode InteractiveServer
 
 <h3>Conteúdo da Página</h3>
+
+<input type="text" @bind="filtro" @oninput="AtualizarTexto" />
 
 @foreach (var conteudo in conteudos)
 {
@@ -14,7 +17,7 @@
 @code {
     private List<Conteudo> conteudos = new List<Conteudo>();
     private HomeController homeController;
-    private string test = "" ;
+    private string filtro = "" ;
 
     [Inject]
     private IConteudoRepository _conteudoRepository { get; set; }
@@ -23,6 +26,15 @@
     {
         homeController = new HomeController(_conteudoRepository);
         await AtualizarConteudos();
+    }
+
+    private async Task AtualizarTexto(ChangeEventArgs args)
+    {
+        if(args.Value != null)
+        {
+            filtro = args.Value!.ToString()!;
+            conteudos = await homeController.Filtrar(filtro);
+        }    
     }
 
     private async Task AtualizarConteudos()

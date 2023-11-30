@@ -17,4 +17,10 @@ public class HomeController
         var conteudos = await _conteudoRepository.GetAllAsync();
         return conteudos.Take(10).ToList();
     }
+
+    public async Task<List<Conteudo>> Filtrar(string parameter)
+    {
+        var conteudos = await _conteudoRepository.GetByParameterAsync(parameter);
+        return conteudos;
+    }
 }

@@ -7,7 +7,7 @@ namespace Infra.Repositories;
 
 public class Repository<T> : IRepository<T> where T : Entity
 {
-    private readonly AppDbContext _db;
+    public readonly AppDbContext _db;
     public readonly DbSet<T> dbSet;
 
     public Repository(AppDbContext db)
