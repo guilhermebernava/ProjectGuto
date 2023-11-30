@@ -18,8 +18,4 @@
     <ProjectReference Include="..\Infra\Infra.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\Pages\NewFolder\" />
-  </ItemGroup>
-
 </Project>

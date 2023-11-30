@@ -1,0 +1,67 @@
+﻿@using Domain.Entities
+@using Domain.Enums
+@using Domain.Repositories
+@using Project.Components.Pages.AdicionarArtista;
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+
+@page "/adicionarArtista"
+<h3>Adicionar Novo Artista</h3>
+
+@if(error.Length > 0)
+{
+    <h1>@error</h1>
+}
+
+@if (saved)
+{
+    <h1>Salvo com sucesso!!!</h1>
+}
+
+<EditForm Model="@novoArtista" OnValidSubmit="HandleSubmit" FormName="adicionarArtistaForm">
+
+    <label for="CodigoDeBarra">Nome:</label>
+    <InputText id="CodigoDeBarra" @bind-Value="novoArtista.Nome" ></InputText>
+
+    <label for="Foto">Foto:</label>
+    <InputText id="Foto" @bind-Value="novoArtista.Foto" />
+
+    <label for="PaisNascimento">Pais de Nascimento:</label>
+    <InputText id="PaisNascimento" @bind-Value="novoArtista.PaisNascimento" />
+
+    <label for="DataNascimento">Data de Nascimento:</label>
+    <InputDate id="DataNascimento" @bind-Value="@novoArtista.DataNascimento" />
+
+    <button type="submit">Salvar</button>
+</EditForm>
+
+@code {
+    public Artista novoArtista = new();
+    private string error = "";
+    private bool saved = false;
+    private AdicionarArtistaController adicionarArtistaController;
+
+    [Inject]
+    private IArtistaRepository _conteudoRepository { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        adicionarArtistaController = new AdicionarArtistaController(_conteudoRepository);
+    }
+
+    private async Task HandleSubmit()
+    {
+        var sucess = await adicionarArtistaController.AdicionarArtista(novoArtista);
+        if (!sucess)
+        {
+            error = "NOT SAVED ARTISTA";
+            saved = false;
+            return;
+        }
+
+        error = "";
+        saved = true;
+        novoArtista = new();
+    }
+}

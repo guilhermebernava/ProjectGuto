@@ -6,7 +6,7 @@ public class Conteudo : Entity
 {
     public Conteudo()
     {
-        
+        DataAdquirido = DateTime.Now;
     }
     public Conteudo(string codigoDeBarra, string titulo, int ano, EFilmeTipo tipo, double preco, DateTime dataAdquirido, double valorCusto, ESituacao situacao, string diretor, string capa)
     {

@@ -1,0 +1,57 @@
+﻿@using Domain.Entities
+@using Domain.Enums
+@using Domain.Repositories
+@using Project.Components.Pages.AdicionarGenero;
+@rendermode InteractiveServer
+
+@page "/adicionarGenero"
+<h3>Adicionar Novo Conteúdo</h3>
+
+@if (error.Length > 0)
+{
+    <h1>@error</h1>
+}
+
+@if (saved)
+{
+    <h1>Salvo com sucesso!!!</h1>
+}
+
+<EditForm Model="@novoGenero" OnValidSubmit="HandleSubmit" FormName="adicionarGeneroForm">
+
+    <label for="Nome">Nome do Genero:</label>
+    <InputText id="Nome" @bind-Value="novoGenero.Nome"></InputText>
+
+    <button type="submit">Salvar</button>
+</EditForm>
+
+@code {
+    private string error = "";
+    private bool saved = false;
+    public Genero novoGenero = new();
+    private AdicionarGeneroController adicionarGeneroController;
+
+    [Inject]
+    private IGeneroRepository _generoRepository { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        adicionarGeneroController = new AdicionarGeneroController(_generoRepository);
+    }
+
+    private async Task HandleSubmit()
+    {
+        var sucess = await adicionarGeneroController.AdicionarGenero(novoGenero);
+        if (!sucess)
+        {
+            error = "NOT SAVED GENERO";
+            saved = false;
+            return;
+        }
+
+        error = "";
+        saved = true;
+        novoGenero = new();
+    }
+}

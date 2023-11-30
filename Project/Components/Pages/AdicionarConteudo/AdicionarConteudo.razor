@@ -8,6 +8,16 @@
 @page "/adicionarConteudo"
 <h3>Adicionar Novo Conteúdo</h3>
 
+@if (error.Length > 0)
+{
+    <h1>@error</h1>
+}
+
+@if (saved)
+{
+    <h1>Salvo com sucesso!!!</h1>
+}
+
 <EditForm Model="@novoConteudo" OnValidSubmit="HandleSubmit" FormName="adicionarConteudoForm">
 
     <label for="CodigoDeBarra">Código de Barra:</label>
@@ -57,6 +67,8 @@
 </EditForm>
 
 @code {
+    private string error = "";
+    private bool saved = false;
     public Conteudo novoConteudo = new();
     private AdicionarConteudoController adicionarConteudoController;
 
@@ -72,6 +84,15 @@
     private async Task HandleSubmit()
     {
         var sucess = await adicionarConteudoController.AdicionarConteudo(novoConteudo);
-        if(!sucess) Console.WriteLine("NOT SAVED CONTEUDO");
+        if (!sucess)
+        {
+            error = "NOT SAVED CONTEUDO";
+            saved = false;
+            return;
+        }
+
+        error = "";
+        saved = true;
+        novoConteudo = new();
     }
 }

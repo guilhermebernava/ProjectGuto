@@ -2,6 +2,10 @@
 
 public class Genero : Entity
 {
+    public Genero()
+    {
+        
+    }
     public Genero(string nome)
     {
         Nome = nome;

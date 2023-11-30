@@ -2,6 +2,10 @@
 
 public class Artista : Entity
 {
+    public Artista()
+    {
+        DataNascimento = DateTime.Now;
+    }
     public Artista(string nome, DateTime dataNascimento, string paisNascimento, string foto)
     {
         Nome = nome;
