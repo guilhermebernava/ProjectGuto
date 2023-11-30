@@ -42,12 +42,12 @@
     private AdicionarArtistaController adicionarArtistaController;
 
     [Inject]
-    private IArtistaRepository _conteudoRepository { get; set; }
+    private IArtistaRepository _artistaRepository { get; set; }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        adicionarArtistaController = new AdicionarArtistaController(_conteudoRepository);
+        adicionarArtistaController = new AdicionarArtistaController(_artistaRepository);
     }
 
     private async Task HandleSubmit()
@@ -57,6 +57,7 @@
         {
             error = "NOT SAVED ARTISTA";
             saved = false;
+            novoArtista = new();
             return;
         }
 

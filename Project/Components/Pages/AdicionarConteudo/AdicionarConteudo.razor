@@ -21,10 +21,10 @@
 <EditForm Model="@novoConteudo" OnValidSubmit="HandleSubmit" FormName="adicionarConteudoForm">
 
     <label for="CodigoDeBarra">Código de Barra:</label>
-    <InputText id="CodigoDeBarra" @bind-Value="novoConteudo.CodigoDeBarra" ></InputText>
+    <InputText id="CodigoDeBarra" @bind-Value="novoConteudo.CodigoDeBarra"></InputText>
 
     <label for="Titulo">Título:</label>
-    <InputText id="Titulo" @bind-Value="novoConteudo.Titulo"/>
+    <InputText id="Titulo" @bind-Value="novoConteudo.Titulo" />
 
     <label for="Capa">Capa:</label>
     <InputText id="Capa" @bind-Value="@novoConteudo.Capa" />
@@ -60,7 +60,19 @@
         }
     </InputSelect>
 
+    <select multiple="multiple" @onchange="AdicionarGenero">
+        @foreach (var genero in _generos)
+        {
+            <option value="@genero.Nome">@genero.Nome</option>
+        }
+    </select>
 
+    <select multiple="multiple" @onchange="AdicionarArtista">
+        @foreach (var artista in _artistas)
+        {
+            <option value="@artista.Nome">@artista.Nome</option>
+        }
+    </select>
 
 
     <button type="submit">Salvar</button>
@@ -69,17 +81,66 @@
 @code {
     private string error = "";
     private bool saved = false;
+    private List<Artista> _artistas = new();
+    private List<Genero> _generos = new();
     public Conteudo novoConteudo = new();
+
     private AdicionarConteudoController adicionarConteudoController;
 
     [Inject]
     private IConteudoRepository _conteudoRepository { get; set; }
+    [Inject]
+    private IGeneroRepository _generoRepository { get; set; }
+    [Inject]
+    private IArtistaRepository _artistaRepository { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
         adicionarConteudoController = new AdicionarConteudoController(_conteudoRepository);
+        _artistas = await _artistaRepository.GetAllAsync();
+        _generos = await _generoRepository.GetAllAsync();
     }
+
+
+
+    private void AdicionarGenero(ChangeEventArgs args)
+    {
+        var generosSelecionadosArray = args.Value as IEnumerable<string>;
+
+        if (generosSelecionadosArray == null) return;
+        if (generosSelecionadosArray.Count() < 1) return;
+        if (novoConteudo.Generos == null) novoConteudo.Generos = new();
+
+        foreach (var genero in _generos)
+        {
+            if (generosSelecionadosArray.Contains(genero.Nome))
+            {
+                if (novoConteudo.Generos.Any(_ => _.Nome == genero.Nome)) continue;
+                novoConteudo.Generos.Add(genero);
+            }
+        }
+    }
+
+
+    private void AdicionarArtista(ChangeEventArgs args)
+    {
+        var artistasSelecionadosArray = args.Value as IEnumerable<string>;
+
+        if (artistasSelecionadosArray == null) return;
+        if (artistasSelecionadosArray.Count() < 1) return;
+        if (novoConteudo.Artistas == null) novoConteudo.Artistas = new();
+
+        foreach (var genero in _artistas)
+        {
+            if (artistasSelecionadosArray.Contains(genero.Nome))
+            {
+                if (novoConteudo.Artistas.Any(_ => _.Nome == genero.Nome)) continue;
+                novoConteudo.Artistas.Add(genero);
+            }
+        }
+    }
+
 
     private async Task HandleSubmit()
     {
@@ -88,6 +149,7 @@
         {
             error = "NOT SAVED CONTEUDO";
             saved = false;
+            novoConteudo = new();
             return;
         }
 
