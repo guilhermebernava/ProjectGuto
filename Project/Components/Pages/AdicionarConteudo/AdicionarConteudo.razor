@@ -1,0 +1,77 @@
+﻿@using Domain.Entities
+@using Domain.Enums
+@using Domain.Repositories
+@using Project.Components.Pages.AdicionarConteudo;
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+
+@page "/adicionarConteudo"
+<h3>Adicionar Novo Conteúdo</h3>
+
+<EditForm Model="@novoConteudo" OnValidSubmit="HandleSubmit" FormName="adicionarConteudoForm">
+
+    <label for="CodigoDeBarra">Código de Barra:</label>
+    <InputText id="CodigoDeBarra" @bind-Value="novoConteudo.CodigoDeBarra" ></InputText>
+
+    <label for="Titulo">Título:</label>
+    <InputText id="Titulo" @bind-Value="novoConteudo.Titulo"/>
+
+    <label for="Capa">Capa:</label>
+    <InputText id="Capa" @bind-Value="@novoConteudo.Capa" />
+
+    <label for="Diretor">Diretor:</label>
+    <InputText id="Diretor" @bind-Value="@novoConteudo.Diretor" />
+
+    <label for="Preco">Preço:</label>
+    <InputNumber id="Preco" @bind-Value="@novoConteudo.Preco" />
+
+    <label for="ValorCusto">Valor de Custo:</label>
+    <InputNumber id="ValorCusto" @bind-Value="@novoConteudo.ValorCusto" />
+
+    <label for="Ano">Ano:</label>
+    <InputNumber id="Ano" @bind-Value="@novoConteudo.Ano" />
+
+    <label for="DataAdquirido">Data Adiquirido:</label>
+    <InputDate id="DataAdquirido" @bind-Value="@novoConteudo.DataAdquirido" />
+
+    <label for="Tipo">Tipo:</label>
+    <InputSelect id="Tipo" @bind-Value="@novoConteudo.Tipo">
+        @foreach (var tipo in Enum.GetValues(typeof(EFilmeTipo)))
+        {
+            <option value="@tipo">@tipo.ToString()</option>
+        }
+    </InputSelect>
+
+    <label for="Situacao">Situacao:</label>
+    <InputSelect id="Situacao" @bind-Value="@novoConteudo.Situacao">
+        @foreach (var situacao in Enum.GetValues(typeof(ESituacao)))
+        {
+            <option value="@situacao">@situacao.ToString()</option>
+        }
+    </InputSelect>
+
+
+
+
+    <button type="submit">Salvar</button>
+</EditForm>
+
+@code {
+    public Conteudo novoConteudo = new();
+    private AdicionarConteudoController adicionarConteudoController;
+
+    [Inject]
+    private IConteudoRepository _conteudoRepository { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        adicionarConteudoController = new AdicionarConteudoController(_conteudoRepository);
+    }
+
+    private async Task HandleSubmit()
+    {
+        var sucess = await adicionarConteudoController.AdicionarConteudo(novoConteudo);
+        if(!sucess) Console.WriteLine("NOT SAVED CONTEUDO");
+    }
+}

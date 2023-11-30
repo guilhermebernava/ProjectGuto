@@ -1,0 +1,32 @@
+﻿@page "/"
+@using Domain.Entities
+@using Domain.Repositories
+@using Project.Components.Pages.Home;
+
+<h3>Conteúdo da Página</h3>
+
+@foreach (var conteudo in conteudos)
+{
+    <p>@conteudo.Titulo</p>
+
+}
+
+@code {
+    private List<Conteudo> conteudos = new List<Conteudo>();
+    private HomeController homeController;
+    private string test = "" ;
+
+    [Inject]
+    private IConteudoRepository _conteudoRepository { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        homeController = new HomeController(_conteudoRepository);
+        await AtualizarConteudos();
+    }
+
+    private async Task AtualizarConteudos()
+    {
+        conteudos = await homeController.PegarConteudos();
+    }
+}
